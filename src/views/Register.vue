@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import * as firebase from "firebase";
+import firebase from "@/Plugin/firebase.js";
 export default {
   data() {
     return {

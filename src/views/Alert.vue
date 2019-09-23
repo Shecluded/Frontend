@@ -12,7 +12,10 @@
     </div>
   </div>
 </template>
+
 <script>
+import firebase from "@/Plugin/firebase.js";
+
 export default {
   data() {
     return {
@@ -57,6 +60,7 @@ export default {
   }
 };
 </script>
+
 <style  scoped>
 .alert-area {
   width: 100vw;

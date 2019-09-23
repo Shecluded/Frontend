@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="parent">
-        <router-link to="/dashboard/take-loan" class="div1 div-card">
+        <a href="#" class="div1 div-card">
           <img src="@/assets/images/eclipse.svg" class="image-pos" alt />
           <div class="p-3">
             <img src="@/assets/images/book.svg" class="image-size" alt />
@@ -35,7 +35,7 @@
               <br />Course
             </h3>
           </div>
-        </router-link>
+        </a>
         <router-link to="/dashboard/view-loan" class="div2 div-card">
           <div class="p-3">
             <img src="@/assets/images/handcoin.svg" alt />
@@ -112,6 +112,7 @@ export default {
   color: white;
 }
 .top {
+  padding: 25px 0;
   height: 6.5vh;
   border-bottom: 0.25px solid #f740abfa;
 }
@@ -169,23 +170,23 @@ export default {
 }
 .div1 {
   grid-area: 1 / 1 / 3 / 3;
-  height: 22vh;
+  height: 23vh;
 }
 .div2 {
   grid-area: 3 / 1 / 5 / 3;
-  height: 22vh;
+  height: 23vh;
 }
 .div3 {
   grid-area: 5 / 1 / 7 / 3;
-  height: 22vh;
+  height: 23vh;
 }
 .div4 {
   grid-area: 1 / 3 / 3 / 5;
-  height: 22vh;
+  height: 23vh;
 }
 .div5 {
   grid-area: 1 / 5 / 3 / 7;
-  height: 22vh;
+  height: 23vh;
 }
 .div6 {
   grid-area: 3 / 3 / 7 / 7;

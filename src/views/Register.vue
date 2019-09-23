@@ -1,15 +1,43 @@
 <template>
   <div class="login flex">
-    <div class="login-content flex-column align-items-center w-100 h-100">
-      <div class="image-container flex-center">
+    <div class="login-content w-100 h-100">
+      <div class="image-container flex-center mt-4">
         <img src="@/assets/images/logo.svg" alt />
       </div>
 
       <div class="login-content flex-column mx-auto mt-5">
-        <h1 class="login-text">Login to your Account</h1>
+        <h1 class="login-text">Create Your Account</h1>
         <p class="login-text-two">To apply for loans and funding</p>
-
-        <input autocomplete="off" type="text" class="input-area mt-3" placeholder="Email" />
+        <div class="btn-container grid mt-3">
+          <input
+            autocomplete="off"
+            type="text"
+            class="input-area"
+            placeholder="First Name"
+            v-model="input.firstName"
+          />
+          <input
+            autocomplete="off"
+            type="text"
+            class="input-area"
+            placeholder="Last Name"
+            v-model="input.lastName"
+          />
+        </div>
+        <input
+          autocomplete="off"
+          type="text"
+          class="input-area mt-3"
+          placeholder="Email"
+          v-model="input.email"
+        />
+        <input
+          autocomplete="off"
+          type="text"
+          class="input-area mt-3"
+          placeholder="Mobile Number"
+          v-model="input.mobileNumber"
+        />
         <div class="password-cont w-100 flex">
           <input
             required
@@ -17,17 +45,17 @@
             :type="passwordFieldType"
             class="input-area mt-3 w-100 flex"
             placeholder="Password"
-            v-model="password"
+            v-model="input.password"
           />
           <div>
-            <div @click="swithVisibility" v-show="password !== ''" class="rounded-grey"></div>
+            <div @click="switchVisibility" v-show="input.password !== ''" class="rounded-grey"></div>
           </div>
         </div>
 
-        <button @click="$router.push('/verify-alert')" type="text" class="button-area mt-3">Login</button>
+        <button @click="submit()" type="text" class="button-area mt-3">Register</button>
         <p class="text-center pt-3 mb-2">
-          Don't have an account?
-          <router-link to="/register">Register</router-link>
+          Already have an account?
+          <router-link to="/">Log In</router-link>
         </p>
         <span
           class="policy-text text-center"
@@ -41,17 +69,41 @@
 </template>
 
 <script>
+import * as firebase from "firebase";
 export default {
   data() {
     return {
       passwordFieldType: "password",
-      password: ""
+      input: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        mobileNumber: ""
+      }
     };
   },
   methods: {
-    swithVisibility() {
+    switchVisibility() {
       this.passwordFieldType =
         this.passwordFieldType === "password" ? "text" : "password";
+    },
+    submit() {
+      this.$store.dispatch("signUser", {
+        email: this.input.email,
+        password: this.input.password,
+        firstName: this.input.firstName,
+        lastName: this.input.lastName,
+        mobileNumber: this.input.mobileNumber
+      });
+      if (this.$store.state.userIsLoggedIn === true) {
+        this.$router.push({
+          name: "/verify-alert",
+          params: {
+            mobileNumber: this.input.mobileNumber
+          }
+        });
+      }
     }
   }
 };
@@ -87,6 +139,8 @@ export default {
   padding-left: 2vw;
   color: #7d7d7d;
   outline: none;
+  font-size: 14px;
+  font-weight: 100;
 }
 .input-area::placeholder {
   font-size: 12px;

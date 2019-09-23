@@ -8,7 +8,7 @@
       <ul class="nav mt-5 nav-pills mb-3" id="pills-tab" role="tablist">
         <li class="nav-item">
           <a
-            class="nav-link active pl-0"
+            class="nav-link active pl-0 pr-0"
             id="pills-personal-tab"
             data-toggle="pill"
             href="#pills-personal"
@@ -17,9 +17,9 @@
             aria-selected="true"
           >Personal</a>
         </li>
-        <li class="nav-item pl-3">
+        <li class="nav-item pl-4">
           <a
-            class="nav-link pl-0"
+            class="nav-link pl-0 pr-0"
             id="pills-finance-tab"
             data-toggle="pill"
             href="#pills-finance"
@@ -28,9 +28,9 @@
             aria-selected="false"
           >Finance</a>
         </li>
-        <li class="nav-item pl-3">
+        <li class="nav-item pl-4">
           <a
-            class="nav-link pl-0"
+            class="nav-link pl-0 pr-0"
             id="pills-changepassword-tab"
             data-toggle="pill"
             href="#pills-changepassword"
@@ -119,8 +119,8 @@ export default {
   position: absolute;
   left: 0;
   bottom: -0.85px;
-  height: 1px;
-  width: 60px; /* or 100px */
+  width: 100%;
+  height: 1px; /* or 100px */
   border-bottom: 3px solid #fc559b;
 }
 

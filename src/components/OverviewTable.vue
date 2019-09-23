@@ -32,7 +32,7 @@ export default {};
   box-sizing: border-box;
   border-radius: 4px;
   width: 45vw;
-  height: 46vh;
+  height: 48vh;
   overflow: scroll;
   position: relative;
 }

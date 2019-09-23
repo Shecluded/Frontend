@@ -10,7 +10,7 @@
       <div v-show="$route.name!== 'profile'" class="profile pt-5">
         <ProfileCard />
       </div>
-      <div class="main pt-5 px-4">
+      <div class="main pt-5">
         <router-view></router-view>
       </div>
     </div>
@@ -71,12 +71,13 @@ export default {
   padding-top: 8vh;
 }
 .profile {
-  width: 28vw;
+  width: 25vw;
   height: 92vh;
   position: fixed;
 }
 .main {
   margin-left: 28vw;
   width: 72vw;
+  padding-right: 3.9vw;
 }
 </style>

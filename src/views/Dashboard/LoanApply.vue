@@ -51,6 +51,9 @@ export default {};
   font-weight: 100;
   color: #ced0c5;
 }
+.apply-loan h2 {
+  font-size: 24px;
+}
 .apply-loan .input-area {
   border: 0.75px solid rgba(20, 20, 20, 0.25);
   box-sizing: border-box;

@@ -16,6 +16,11 @@ export default new Router({
           component: () => import("@/views/Login.vue")
         },
         {
+          path: "register",
+          name: "register",
+          component: () => import("@/views/Register.vue")
+        },
+        {
           path: "verify-alert",
           name: "alert",
           component: () => import("@/views/Alert.vue")

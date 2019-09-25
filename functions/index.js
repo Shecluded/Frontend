@@ -20,14 +20,15 @@ exports.createUserAndMetadata = functions.auth.user().onCreate(async user => {
     return db.collection('users').doc(userId)
       .get()
       .then(() => {
+        
         const msg = {
           to: user.email,
           from: 'hello@shecluded.com',
-          subject: 'Welcome to Shecluded',
           templateId: TEMPLATE_ID,
-          substitutions: {
-            name: user.lastName
-          }
+          dynamic_template_data: {
+            subject: 'Welcome to Shecluded!',
+            name: user.displayName,
+          },
         };
         return sgMail.send(msg)
       })

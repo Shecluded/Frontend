@@ -6,12 +6,16 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    userId: "",
     userIsLoggedIn: false,
     error: ""
   },
   mutations: {
     setUser(state, payload) {
       state.userIsLoggedIn = payload;
+    },
+    setUserId(state, payload) {
+      state.userId = payload;
     },
     setError(state, payload) {
       state.error = payload;
@@ -33,7 +37,8 @@ export default new Vuex.Store({
                 email: payload.email,
                 firstName: payload.firstName,
                 lastName: payload.lastName,
-                mobileNumber: payload.mobileNumber
+                mobileNumber: payload.mobileNumber,
+                id: user.user.uid
               })
               .then(ref => {
                 var user = firebase.auth().currentUser;
@@ -44,6 +49,7 @@ export default new Vuex.Store({
                 }
               });
           }
+          commit("setUser", true);
         })
         .catch(err => {
           commit("setError", err);

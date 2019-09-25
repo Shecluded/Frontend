@@ -20,7 +20,27 @@
 </template>
 
 <script>
-export default {};
+import db from "../firebase";
+export default {
+  data() {
+    return {
+      mobileNumber: null
+    };
+  },
+  mounted() {
+    db.collection("users")
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          console.log(doc.id, "=>", doc.data());
+          console.log(this.$store.state.userId);
+        });
+      })
+      .catch(err => {
+        console.log("Error getting documents", err);
+      });
+  }
+};
 </script>
 
 <style scoped>

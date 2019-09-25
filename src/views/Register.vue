@@ -174,14 +174,9 @@ export default {
         lastName: this.input.lastName,
         mobileNumber: this.input.mobileNumber
       });
-      // if (this.$store.state.userIsLoggedIn === true) {
-      //   this.$router.push({
-      //     name: "/verify-alert",
-      //     params: {
-      //       mobileNumber: this.input.mobileNumber
-      //     }
-      //   });
-      // }
+      if (this.$store.state.userId !== "") {
+        this.$router.push("/verify");
+      }
     }
   },
   computed: {

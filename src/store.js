@@ -12,7 +12,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setUser(state, payload) {
-      state.userIsLoggedIn = payload;
+      state.userIsLoggedIn = payload || true;
     },
     setUserId(state, payload) {
       state.userId = payload;
@@ -44,12 +44,13 @@ export default new Vuex.Store({
                 var user = firebase.auth().currentUser;
                 if (user) {
                   commit("setUserId", user.uid);
+                  commit("setUser", true);
+                  console.log(user);
                 } else {
                   console.log("error");
                 }
               });
           }
-          commit("setUser", true);
         })
         .catch(err => {
           commit("setError", err);

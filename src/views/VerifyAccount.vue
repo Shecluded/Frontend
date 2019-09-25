@@ -4,7 +4,7 @@
       <h1 class="verify-text">Verify your phone number</h1>
       <p class="verify-text-two pt-4">Please enter the verification code sent to you.</p>
       <input autocomplete="off" type="number" class="verify-input" placeholder="Verification Code" />
-      <button type="text" class="verify-button mt-3">Register</button>
+      <button @click="register()" type="text" class="verify-button mt-3">Register</button>
       <p class="text-center pt-3 mb-2">
         Didn’t get a code?
         <router-link to="/">Send again</router-link>
@@ -27,13 +27,23 @@ export default {
       mobileNumber: null
     };
   },
+  watch: {
+    mobileNumber(x) {
+      this.makeRequest();
+    }
+  },
+  methods: {
+    makeRequest() {},
+    register() {}
+  },
   mounted() {
     db.collection("users")
+      .where("id", "==", this.$store.state.userId)
       .get()
       .then(snapshot => {
         snapshot.forEach(doc => {
-          console.log(doc.id, "=>", doc.data());
-          console.log(this.$store.state.userId);
+          this.mobileNumber = doc.data().mobileNumber;
+          console.log(this.mobileNumber);
         });
       })
       .catch(err => {

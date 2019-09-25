@@ -124,6 +124,7 @@
 
 <script>
 import { required, minLength, between } from "vuelidate/lib/validators";
+import { mapState } from "vuex";
 import * as firebase from "firebase";
 export default {
   data() {
@@ -160,30 +161,35 @@ export default {
       }
     }
   },
+  watch: {
+    userIsLoggedIn(x) {
+      if (x === true) {
+        this.$router.push("/verify");
+      }
+    }
+  },
   methods: {
     switchVisibility() {
       this.passwordFieldType =
         this.passwordFieldType === "password" ? "text" : "password";
     },
-    submit() {
+    async submit() {
       this.disable = true;
-      this.$store.dispatch("signUser", {
+      await this.$store.dispatch("signUser", {
         email: this.input.email,
         password: this.input.password,
         firstName: this.input.firstName,
         lastName: this.input.lastName,
         mobileNumber: this.input.mobileNumber
       });
-      if (this.$store.state.userId !== "") {
-        this.$router.push("/verify");
-      }
     }
   },
   computed: {
     emailIsValid() {
       const exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return this.input.email && exp.test(this.input.email);
-    }
+    },
+    ...mapState(["userIsLoggedIn"])
   }
 };
 </script>

@@ -25,6 +25,7 @@ export default new Router({
           name: "alert",
           component: () => import("@/views/Alert.vue")
         },
+
         {
           path: "welcome",
           name: "welcome",
@@ -75,6 +76,11 @@ export default new Router({
           path: "source-income",
           name: "sourceincome",
           component: () => import("@/views/Dashboard/SourceIncome.vue")
+        },
+        {
+          path: "add-income",
+          name: "addincome",
+          component: () => import("@/views/Dashboard/AddIncome.vue")
         },
         {
           path: "profile",

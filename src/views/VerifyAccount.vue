@@ -3,7 +3,13 @@
     <div class="verify-area flex-column w-50 h-100">
       <h1 class="verify-text">Verify your phone number</h1>
       <p class="verify-text-two pt-4">Please enter the verification code sent to you.</p>
-      <input autocomplete="off" type="number" class="verify-input" placeholder="Verification Code" />
+      <input
+        autocomplete="off"
+        type="number"
+        v-model="code"
+        class="verify-input"
+        placeholder="Verification Code"
+      />
       <button @click="register()" type="text" class="verify-button mt-3">Register</button>
       <p class="text-center pt-3 mb-2">
         Didn’t get a code?
@@ -20,11 +26,16 @@
 </template>
 
 <script>
+import qs from "querystring";
 import db from "../firebase";
+import axios from "axios";
+
 export default {
   data() {
     return {
-      mobileNumber: null
+      mobileNumber: null,
+      code: null,
+      requestId: null
     };
   },
   watch: {
@@ -33,8 +44,23 @@ export default {
     }
   },
   methods: {
-    makeRequest() {},
-    register() {}
+    async makeRequest() {
+      let res = await axios.post("http://localhost:5678/request", {
+        number: this.mobileNumber
+      });
+      this.requestId = res.data.request_id;
+      console.log(res);
+    },
+    async register() {
+      let res = await axios.post("http://localhost:5678/check", {
+        code: this.code,
+        requestId: this.requestId
+      });
+      console.log(res);
+      if (res.statusText === "OK") {
+        this.$router.push("/verify-alert");
+      }
+    }
   },
   mounted() {
     db.collection("users")

@@ -1,44 +1,21 @@
-//Firebase Config
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
+const functions = require('firebase-functions')
+
+var admin = require('firebase-admin')
+
 admin.initializeApp();
 
-const db = admin.firestore();
+const mailgun = require('mailgun-js')({apiKey:'2bde729f9c6e073d81128c7eb0a46b6f-baa55c84-b0c77a6c', domain:'https://api.mailgun.net/v3/sandboxec33eaacb74e4f41a8985d9a8824c148.mailgun.org'})
 
-//SendGrid Config
-const sgMail = require('@sendgrid/mail');
+exports.createWelcomeEmail = functions.auth.user().onCreate(async user => {
+  const email = user.email;
 
-const SENDGRID_API_KEY = functions.config().sendgrid.key;
-const TEMPLATE_ID = functions.config().sendgrid.template;
-sgMail.setApiKey(SENDGRID_API_KEY);
+  var msg = {
+    from: 'noreply@shecluded.com',
+    subject: 'Welcome!',
+    html: `<p>Welcome! ${user.lastName}</p>`,
+    'h:Reply-To': 'app@app.com',
+    to: email
+  }
 
-//Functions 
-exports.createUserAndMetadata = functions.auth.user().onCreate(async user => {
-
-    const userId = user.uid
-    
-    return db.collection('users').doc(userId)
-      .get()
-      .then(() => {
-        
-        const msg = {
-          to: user.email,
-          from: 'hello@shecluded.com',
-          templateId: TEMPLATE_ID,
-          dynamic_template_data: {
-            subject: 'Welcome to Shecluded!',
-            name: user.displayName,
-          },
-        };
-        return sgMail.send(msg)
-      })
-      .then(()=> console.log('email sent'))
-      .catch((err) => console.log(err))
-  })
-  
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+  return await mailgun.messages().send(msg)
+})

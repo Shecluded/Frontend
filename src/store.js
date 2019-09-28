@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import firebase from "@/Plugin/firebase.js";
+import db from './firebase.js'
+import firebase from 'firebase'
 
 Vue.use(Vuex);
 

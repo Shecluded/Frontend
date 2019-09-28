@@ -35,12 +35,23 @@
         <img src="@/assets/images/rectangle.svg" class="img-ico" alt />
       </div>
     </div>
-    <button class="btn-area mt-3">Calculate Loan</button>
+    <button @click="show = !show" class="btn-area mt-3">Calculate Loan</button>
+    <RepaymentSchedule v-if="show" />
   </div>
 </template>
 
 <script>
-export default {};
+import RepaymentSchedule from "../../components/RepaymentSchedule";
+export default {
+  data() {
+    return {
+      show: false
+    };
+  },
+  components: {
+    RepaymentSchedule
+  }
+};
 </script>
 
 <style>

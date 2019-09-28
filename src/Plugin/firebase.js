@@ -9,6 +9,4 @@ var config = {
   messagingSenderId: process.env.FIREBASE_MESSANGER_SENDER_ID,
   appId: process.env.FIREBASE_APP_ID
 };
-firebase.initializeApp(config);
-
-export default firebase;
+export default !firebase.apps.length ? firebase.initializeApp(config) : firebase;

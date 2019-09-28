@@ -29,6 +29,7 @@
 import qs from "querystring";
 import db from "../firebase";
 import axios from "axios";
+import { mapActions } from 'vuex';
 
 export default {
   data() {
@@ -58,8 +59,13 @@ export default {
       });
       console.log(res);
       if (res.statusText === "OK") {
+        this.verifyUser()
         this.$router.push("/verify-alert");
       }
+    },
+     ...mapActions(["verifyEmail"]),
+    verifyUser() {
+      this.verifyEmail();
     }
   },
   mounted() {

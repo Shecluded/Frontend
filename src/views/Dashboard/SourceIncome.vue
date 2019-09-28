@@ -5,13 +5,13 @@
         <img src="@/assets/images/backarrow.svg" @click="$router.go(-1)" alt class="click" />
         <h2 class="mb-0 pl-3 dim">Sources of income</h2>
       </div>
-      <button class="px-3">Add more sources of income</button>
+      <button @click="$router.push('/dashboard/add-income')" class="px-3">Add more sources of income</button>
     </div>
-    <div class="source-container mt-5">
+    <div class="source-container">
       <div v-for="i in 4" :key="i">
         <div class="source-card mt-4 pl-3 pt-2">
           <h2>Business Owner</h2>
-          <div class="flex-between">
+          <div class="flex-between income-area">
             <div class="flex-column">
               <span>Yoka Technologies</span>
               <span class="pt-1">
@@ -20,13 +20,13 @@
               </span>
               <span class="pt-1">+234 801 234 5678</span>
             </div>
-            <div class="flex-center pr-3">
-              <div class="flex-column align-items-center">
-                <div class="grey-circle"></div>120k
+            <div class="d-flex flex-column income-area pr-3">
+              <div class="flex-column align-items-center pb-3">
+                <img src="@/assets/images/Group.svg" alt /> 120k
                 <span>Monthly Profit</span>
               </div>
-              <div class="pl-3 flex-column align-items-center">
-                <div class="grey-circle"></div>3
+              <div class="flex-column align-items-center">
+                <img src="@/assets/images/Profit.svg" alt />3
                 <span>No of Employees</span>
               </div>
             </div>
@@ -61,6 +61,7 @@ export default {};
   display: grid;
   grid-template-columns: 320px 320px;
   justify-content: space-evenly;
+  position: relative;
 }
 .source-card {
   background: #ffffff;
@@ -68,7 +69,7 @@ export default {};
   box-sizing: border-box;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
-  height: 20vh;
+  height: 23vh;
 }
 .source-card h2 {
   color: #7d7d7d;
@@ -84,11 +85,7 @@ export default {};
   font-weight: bold;
   font-size: 10px;
 }
-.grey-circle {
-  background: #c4c4c4;
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  margin-bottom: 5px;
+.income-area {
+  margin-top: -12px;
 }
 </style>

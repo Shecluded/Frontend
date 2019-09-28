@@ -1,16 +1,27 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import firebase from "@/Plugin/firebase.js";
-
+import firebase from "firebase";
+import db from "./firebase";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    userIsLoggedIn: false
+    userId: "",
+    userIsLoggedIn: false,
+    error: ""
   },
   mutations: {
     setUser(state, payload) {
-      state.userIsLoggedIn = payload;
+      state.userIsLoggedIn = payload || true;
+    },
+    setUserId(state, payload) {
+      state.userId = payload;
+    },
+    setError(state, payload) {
+      state.error = payload;
+      setTimeout(() => {
+        state.error = "";
+      }, 5000);
     }
   },
   actions: {
@@ -19,22 +30,30 @@ export default new Vuex.Store({
         .auth()
         .createUserWithEmailAndPassword(payload.email, payload.password)
         .then(user => {
-          if (user.user.uid) {
-            let userId = user.user.uid;
-            firebase
-              .database()
-              .ref("users/" + userId)
-              .set({
+          let userId = user.user.uid;
+          if (userId) {
+            db.collection("users")
+              .add({
                 email: payload.email,
                 firstName: payload.firstName,
                 lastName: payload.lastName,
-                mobileNumber: payload.mobileNumber
+                mobileNumber: payload.mobileNumber,
+                id: user.user.uid
+              })
+              .then(ref => {
+                var user = firebase.auth().currentUser;
+                if (user) {
+                  commit("setUserId", user.uid);
+                  commit("setUser", true);
+                  console.log(user);
+                } else {
+                  console.log("error");
+                }
               });
-            commit("setUser", true);
           }
         })
         .catch(err => {
-          console.log(err);
+          commit("setError", err);
         });
     }
   }

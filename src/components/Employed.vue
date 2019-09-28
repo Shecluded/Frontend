@@ -53,8 +53,6 @@ export default {
 </script>
 
 <style>
-.employed {
-}
 .employed .grid-area {
   width: 100%;
   display: grid;

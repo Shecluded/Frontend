@@ -5,54 +5,101 @@
         <img src="@/assets/images/logo.svg" alt />
       </div>
 
+
       <div class="login-content flex-column mx-auto mt-5">
         <h1 class="login-text">Create Your Account</h1>
         <p class="login-text-two">To apply for loans and funding</p>
-        <div class="btn-container grid mt-3">
-          <input
-            autocomplete="off"
-            type="text"
-            class="input-area"
-            placeholder="First Name"
-            v-model="input.firstName"
-          />
-          <input
-            autocomplete="off"
-            type="text"
-            class="input-area"
-            placeholder="Last Name"
-            v-model="input.lastName"
-          />
+        <div class="flex-column" v-if="$store.state.error !== ''">
+          <span class="text-md mt-2">{{$store.state.error}}</span>
         </div>
-        <input
-          autocomplete="off"
-          type="text"
-          class="input-area mt-3"
-          placeholder="Email"
-          v-model="input.email"
-        />
-        <input
-          autocomplete="off"
-          type="text"
-          class="input-area mt-3"
-          placeholder="Mobile Number"
-          v-model="input.mobileNumber"
-        />
-        <div class="password-cont w-100 flex">
+        <div class="btn-container grid mt-3">
+          <div class="w-100 flex-column">
+            <input
+              autocomplete="off"
+              type="text"
+              class="input-area"
+              placeholder="First Name"
+              v-model="input.firstName"
+              @blur="$v.input.firstName.$touch()"
+            />
+            <div v-if="$v.input.firstName.$error">
+              <span class="text-md" v-if="!$v.input.firstName.required">First name is required</span>
+            </div>
+          </div>
+          <div class="w-100 flex-column">
+            <input
+              autocomplete="off"
+              type="text"
+              class="input-area"
+              placeholder="Last Name"
+              v-model="input.lastName"
+              @blur="$v.input.lastName.$touch()"
+            />
+            <div v-if="$v.input.lastName.$error">
+              <span class="text-md" v-if="!$v.input.lastName.required">Last name is required</span>
+            </div>
+          </div>
+        </div>
+        <div class="w-100 flex-column">
           <input
-            required
-            autocomplete="new-password"
-            :type="passwordFieldType"
-            class="input-area mt-3 w-100 flex"
-            placeholder="Password"
-            v-model="input.password"
+            autocomplete="off"
+            type="text"
+            class="input-area mt-3"
+            placeholder="Email"
+            v-model="input.email"
+            @blur="$v.input.email.$touch()"
           />
-          <div>
-            <div @click="switchVisibility" v-show="input.password !== ''" class="rounded-grey"></div>
+          <div class="flex-column" v-if="$v.input.email.$error">
+            <span class="text-md mt-2" v-if="!$v.input.email.required">Email is required</span>
+          </div>
+          <div class="flex-column" v-if="!emailIsValid && input.email !== ''">
+            <span class="text-md mt-2" v-if="!emailIsValid">Enter valid email address</span>
+          </div>
+        </div>
+        <div class="w-100 flex-column">
+          <input
+            autocomplete="off"
+            type="text"
+            class="input-area mt-3"
+            placeholder="Mobile Number"
+            v-model="input.mobileNumber"
+            @blur="$v.input.mobileNumber.$touch()"
+          />
+          <div v-if="$v.input.mobileNumber.$error">
+            <span class="text-md" v-if="!$v.input.mobileNumber.required">Mobile Number is required</span>
+          </div>
+        </div>
+        <div class="w-100 flex-colimn">
+          <div class="password-cont w-100 flex">
+            <input
+              required
+              autocomplete="new-password"
+              :type="passwordFieldType"
+              class="input-area mt-3 w-100 flex"
+              placeholder="Password"
+              v-model="input.password"
+              @blur="$v.input.password.$touch()"
+            />
+            <div>
+              <div @click="switchVisibility" v-show="input.password !== ''" class="rounded-grey"></div>
+            </div>
+          </div>
+          <div v-if="$v.input.password.$error">
+            <span class="text-md mt-2" v-if="!$v.input.password.required">Password is required</span>
+            <span
+              class="text-md mt-2"
+              v-if="!$v.input.password.minLength"
+            >Password must be at least {{$v.input.password.$params.minLength.min}} characters long.</span>
           </div>
         </div>
 
-        <button @click="submit()" type="text" class="button-area mt-3">Register</button>
+        <button
+          :class="{disabled:$v.$invalid || $store.state.error !== ''}"
+          :disabled="$v.$invalid || $store.state.error !== ''"
+          @click="submit()"
+          type="text"
+          class="button-area mt-3"
+        >Register</button>
         <p class="text-center pt-3 mb-2">
           Already have an account?
           <router-link to="/">Log In</router-link>
@@ -69,11 +116,15 @@
 </template>
 
 <script>
-import firebase from "@/Plugin/firebase.js";
+import { required, minLength, between } from "vuelidate/lib/validators";
+import { mapState } from "vuex";
+import * as firebase from "firebase";
 export default {
   data() {
     return {
+      error: this.$store.state.error,
       passwordFieldType: "password",
+      disable: false,
       input: {
         firstName: "",
         lastName: "",
@@ -83,28 +134,55 @@ export default {
       }
     };
   },
+  validations: {
+    input: {
+      firstName: {
+        required
+      },
+      lastName: {
+        required
+      },
+      email: {
+        required
+      },
+      password: {
+        required,
+        minLength: minLength(6)
+      },
+      mobileNumber: {
+        required
+      }
+    }
+  },
+  watch: {
+    userIsLoggedIn(x) {
+      if (x === true) {
+        this.$router.push("/verify");
+      }
+    }
+  },
   methods: {
     switchVisibility() {
       this.passwordFieldType =
         this.passwordFieldType === "password" ? "text" : "password";
     },
-    submit() {
-      this.$store.dispatch("signUser", {
+    async submit() {
+      this.disable = true;
+      await this.$store.dispatch("signUser", {
         email: this.input.email,
         password: this.input.password,
         firstName: this.input.firstName,
         lastName: this.input.lastName,
         mobileNumber: this.input.mobileNumber
       });
-      if (this.$store.state.userIsLoggedIn === true) {
-        this.$router.push({
-          name: "/verify-alert",
-          params: {
-            mobileNumber: this.input.mobileNumber
-          }
-        });
-      }
     }
+  },
+  computed: {
+    emailIsValid() {
+      const exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return this.input.email && exp.test(this.input.email);
+    },
+    ...mapState(["userIsLoggedIn"])
   }
 };
 </script>
@@ -146,6 +224,11 @@ export default {
   font-size: 12px;
   font-weight: 100;
 }
+.text-md {
+  font-size: 12px;
+  font-weight: 100;
+  color: #f740ac;
+}
 .input-area:focus {
   border: 0.75px solid #f740ac;
 }
@@ -175,5 +258,8 @@ export default {
 }
 .login p {
   letter-spacing: 0.2px;
+}
+.disabled {
+  background: #460129;
 }
 </style>

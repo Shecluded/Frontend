@@ -12,6 +12,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background: #f7f7f7;
 }
 .flex {
   display: flex;

@@ -1,21 +1,40 @@
 const functions = require('firebase-functions')
 
-var admin = require('firebase-admin')
+const admin = require('firebase-admin')
 
 admin.initializeApp();
 
-const mailgun = require('mailgun-js')({apiKey:'2bde729f9c6e073d81128c7eb0a46b6f-baa55c84-b0c77a6c', domain:'https://api.mailgun.net/v3/sandboxec33eaacb74e4f41a8985d9a8824c148.mailgun.org'})
+//SendGrid Config
+const sgMail = require('@sendgrid/mail');
+
+const SENDGRID_API_KEY = functions.config().sendgrid.key
+const TEMPLATE_ID = functions.config().sendgrid.template
+
+sgMail.setApiKey(SENDGRID_API_KEY);
 
 exports.createWelcomeEmail = functions.auth.user().onCreate(async user => {
+
   const email = user.email;
 
-  var msg = {
-    from: 'noreply@shecluded.com',
-    subject: 'Welcome!',
-    html: `<p>Welcome! ${user.lastName}</p>`,
-    'h:Reply-To': 'app@app.com',
-    to: email
-  }
+  const msg = {
+    to: email,
+    from: 'hello@shecluded.com',
+    subject: 'Welcome to Shecluded',
+    templateId: TEMPLATE_ID,
+    substitutions: {
+      name: user.lastName
+    }
+  };
 
-  return await mailgun.messages().send(msg)
+  return new Promise((resolve, reject) => {
+    sgMail.send(msg, (error, body) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(body);
+        console.log(msg)
+        console.log(body)
+      }
+    });
+  });
 })

@@ -17,7 +17,7 @@
       </p>
       <span
         class="policy-text text-center"
-      >By clicking on Sign up, you agree to our terms & conditions and privacy policy</span>
+      >By clicking on Sign up, you agree to our terms &amp; conditions and privacy policy</span>
     </div>
     <div class="verify-logo flex-center">
       <img src="@/assets/images/verify.svg" alt />
@@ -28,21 +28,28 @@
 <script>
 import qs from "querystring";
 import db from "../firebase";
+import * as firebase from 'firebase'
+// import { auth, functions } from '../firebase'
 import axios from "axios";
-import { mapActions } from 'vuex';
 
 export default {
   data() {
     return {
       mobileNumber: null,
       code: null,
-      requestId: null
+      requestId: null,
+      user: null
     };
   },
   watch: {
     mobileNumber(x) {
       this.makeRequest();
     }
+  },
+  beforeCreate() {
+    firebase.auth().onAuthStateChanged((user) => {
+      this.user = user;
+    })
   },
   methods: {
     async makeRequest() {
@@ -59,14 +66,13 @@ export default {
       });
       console.log(res);
       if (res.statusText === "OK") {
-        this.verifyUser()
         this.$router.push("/verify-alert");
       }
     },
-     ...mapActions(["verifyEmail"]),
-    verifyUser() {
-      this.verifyEmail();
-    }
+    sendEmail() {
+      const callable = functions.httpsCallable('sendEmail');
+      return callable()
+    },
   },
   mounted() {
     db.collection("users")

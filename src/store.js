@@ -59,11 +59,16 @@ export default new Vuex.Store({
         .auth()
         .signInWithEmailAndPassword(payload.email, payload.password)
           .then(user => {
-            console.log(user)
+            const userToken = user.user.ma
+            localStorage.setItem("shecludedtoken", userToken)
+          })
+          .catch(error => {
+            commit("setError", error)
           })
 
     },
     logoutUser() {
+      localStorage.removeItem("shecludedtoken")
       firebase.auth().signOut();
     }
   }

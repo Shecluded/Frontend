@@ -38,7 +38,7 @@
             <span class="text-md mt-2" v-if="!$v.user.password.required">Password is required</span>
           </div>
           <div>
-            <div @click="swithVisibility" v-show="password !== ''" class="rounded-grey"></div>
+            <div @click="swithVisibility" v-show="user.password !== ''" class="rounded-grey"></div>
           </div>
         </div>
 

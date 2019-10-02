@@ -5,7 +5,6 @@
         <img src="@/assets/images/logo.svg" alt />
       </div>
 
-
       <div class="login-content flex-column mx-auto mt-5">
         <h1 class="login-text">Create Your Account</h1>
         <p class="login-text-two">To apply for loans and funding</p>
@@ -92,7 +91,6 @@
             >Password must be at least {{$v.input.password.$params.minLength.min}} characters long.</span>
           </div>
         </div>
-
         <button
           :class="{disabled:$v.$invalid || $store.state.error !== ''}"
           :disabled="$v.$invalid || $store.state.error !== ''"
@@ -114,11 +112,10 @@
     </div>
   </div>
 </template>
-
 <script>
 import { required, minLength, between } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
-import * as firebase from "firebase";
+import firebase from '../firebase'
 export default {
   data() {
     return {
@@ -186,7 +183,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .login {
   width: 100vw;
@@ -262,4 +258,4 @@ export default {
 .disabled {
   background: #460129;
 }
-</style>
+</style>`

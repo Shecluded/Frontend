@@ -4,14 +4,8 @@
       <div class="image-container flex-center mt-4">
         <img src="@/assets/images/logo.svg" alt />
       </div>
-      <!-- <b-alert
-        class="mx-5 mt-3"
-        :show="$store.state.error !== ''"
-        dismissible
-        variant="warning"
-        @dismissed="dismissCountDown=0"
-        @dismiss-count-down="countDownChanged"
-      >{{$store.state.error}}</b-alert>-->
+
+
       <div class="login-content flex-column mx-auto mt-5">
         <h1 class="login-text">Create Your Account</h1>
         <p class="login-text-two">To apply for loans and funding</p>
@@ -122,7 +116,7 @@
 <script>
 import { required, minLength, between } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
-import firebase from '../firebase'
+import * as firebase from "firebase";
 export default {
   data() {
     return {

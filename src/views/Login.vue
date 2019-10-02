@@ -101,6 +101,7 @@ export default {
         email: this.user.email,
         password: this.user.password
       });
+      this.$router.push("/dashboard")
     }
   },
   computed: {

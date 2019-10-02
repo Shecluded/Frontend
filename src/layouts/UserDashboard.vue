@@ -3,7 +3,7 @@
     <header class="header flex-center shadow-sm">
       <h1 class="text-center">SHECLUDED</h1>
       <div v-if="$route.name!== 'profile'" class="btn-cont">
-        <button class="logout-btn">Log Out</button>
+        <button @click="leaveHere" class="logout-btn">Log Out</button>
       </div>
     </header>
     <div class="dashboard-cont">
@@ -19,6 +19,7 @@
 
 <script>
 import ProfileCard from "../components/ProfileCard";
+
 export default {
   components: {
     ProfileCard
@@ -31,6 +32,12 @@ export default {
           document.body.style.backgroundColor = "#F7F7F7";
         }
       }
+    }
+  },
+  methods: {
+    leaveHere() {
+      this.$store.dispatch("logoutUser")
+      this.$router.push("/");
     }
   }
 };

@@ -47,6 +47,9 @@ const router = new Router({
     {
       path: "/dashboard",
       component: () => import("@/layouts/UserDashboard.vue"),
+      meta: {
+        requiresAuth: true
+      },
       children: [
         {
           path: "",
@@ -106,16 +109,13 @@ const router = new Router({
 
 //route guard
 router.beforeEach((to, from, next) => {
-  if(to.matched.some(record => record.meta.auth)) {
-    firebase.auth().onAuthStateChanged((user) => {
-      if(!user) {
-        next({
-          path: '/'
-        })
-      } else {
-        next()
-      }
-    })
+  const currentUser = localStorage.getItem('shecludedtoken');
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+  if(requiresAuth && !currentUser) {
+    next('/');
+  } else if(requiresAuth && currentUser) {
+    next()
   } else {
     next()
   }

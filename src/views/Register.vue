@@ -5,7 +5,6 @@
         <img src="@/assets/images/logo.svg" alt />
       </div>
 
-
       <div class="login-content flex-column mx-auto mt-5">
         <h1 class="login-text">Create Your Account</h1>
         <p class="login-text-two">To apply for loans and funding</p>
@@ -117,6 +116,7 @@
 import { required, minLength, between } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
 import * as firebase from "firebase";
+
 export default {
   data() {
     return {

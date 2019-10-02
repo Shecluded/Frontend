@@ -1,7 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import firebase from "firebase";
-import db from "./firebase";
+import db from './firebase.js'
+import firebase from 'firebase'
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -40,7 +41,7 @@ export default new Vuex.Store({
                 mobileNumber: payload.mobileNumber,
                 id: user.user.uid
               })
-              .then(ref => {
+              .then(() => {
                 var user = firebase.auth().currentUser;
                 if (user) {
                   commit("setUserId", user.uid);
@@ -55,6 +56,20 @@ export default new Vuex.Store({
         .catch(err => {
           commit("setError", err);
         });
+    },
+    verifyEmail() {
+     firebase.auth().onAuthStateChanged((user) => {
+       if(user) {
+         let user = firebase.auth().currentUser;
+         user.sendEmailVerification()
+          .then(() => {
+            console.log('Email Sent to ' + user.email)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+       }
+     })
     }
   }
 });

@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import firebase from "@/Plugin/firebase.js";
+import firebase from "../firebase"
 
 export default {
   data() {

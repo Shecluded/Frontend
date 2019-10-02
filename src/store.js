@@ -67,8 +67,9 @@ export default new Vuex.Store({
           })
 
     },
-    logoutUser() {
-      localStorage.removeItem("shecludedtoken")
+    logoutUser({ commit }) {
+      localStorage.removeItem("shecludedtoken");
+      commit("setUser", false)
       firebase.auth().signOut();
     }
   }

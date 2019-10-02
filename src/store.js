@@ -41,6 +41,7 @@ export default new Vuex.Store({
                 mobileNumber: payload.mobileNumber
               })
               .then((user) => {
+                console.log(user)
                 if (user) {
                   commit("setUserId", user.id);
                   commit("setUser", true);
@@ -53,6 +54,18 @@ export default new Vuex.Store({
         .catch(err => {
           commit("setError", err);
         });
+    },
+    loginUser({ commit }, payload)  {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(payload.email, payload.password)
+          .then(user => {
+            console.log(user)
+          })
+
+    },
+    logoutUser() {
+      firebase.auth().signOut();
     }
   }
 });

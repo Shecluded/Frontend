@@ -28,7 +28,7 @@ export default {
       immediate: true,
       handler(x) {
         if (x.name === "dashboard") {
-          document.body.style.backgroundColor = "#f7f7f7";
+          document.body.style.backgroundColor = "#F7F7F7";
         }
       }
     }

@@ -9,7 +9,21 @@
         <h1 class="login-text">Login to your Account</h1>
         <p class="login-text-two">To apply for loans and funding</p>
 
-        <input autocomplete="off" type="text" class="input-area mt-3" placeholder="Email" />
+        <input 
+          autocomplete="off"
+          type="text"
+          class="input-area mt-3"
+          placeholder="Email"
+          @blur="$v.user.email.$touch()"
+          v-model="user.email"
+          />
+          <div class="flex-column" v-if="$v.user.email.$error">
+            <span class="text-md mt-2" v-if="!$v.user.email.required">Email is required</span>
+          </div>
+          <div class="flex-column" v-if="!emailIsValid && user.email !== ''">
+            <span class="text-md mt-2" v-if="!emailIsValid">Enter valid email address</span>
+          </div>
+
         <div class="password-cont w-100 flex">
           <input
             required
@@ -17,14 +31,25 @@
             :type="passwordFieldType"
             class="input-area mt-3 w-100 flex"
             placeholder="Password"
-            v-model="password"
+            v-model="user.password"
+            @blur="$v.user.password.$touch()"
           />
+          <div v-if="$v.user.password.$error">
+            <span class="text-md mt-2" v-if="!$v.user.password.required">Password is required</span>
+          </div>
           <div>
-            <div @click="swithVisibility" v-show="password !== ''" class="rounded-grey"></div>
+            <div @click="swithVisibility" v-show="user.password !== ''" class="rounded-grey"></div>
           </div>
         </div>
 
-        <button @click="$router.push('/verify-alert')" type="text" class="button-area mt-3">Login</button>
+        <button 
+          :class="{disabled:$v.$invalid || $store.state.error !== ''}"
+          :disabled="$v.$invalid || $store.state.error !== ''"
+          @click="login()"
+          type="text" 
+          class="button-area mt-3"
+        >Login
+        </button>
         <p class="text-center pt-3 mb-2">
           Don't have an account?
           <router-link to="/register">Register</router-link>
@@ -41,19 +66,51 @@
 </template>
 
 <script>
+import { required } from "vuelidate/lib/validators";
+import { mapState } from 'vuex'
+import firebase from '../firebase'
 export default {
   data() {
     return {
       passwordFieldType: "password",
-      password: ""
+      user: {
+        email: "",
+        password: "",
+      },
+      disable: false,
+      error: this.$store.state.error
     };
+  },
+  validations: {
+    user: {
+      email: {
+        required
+      },
+      password: {
+        required
+      }
+    }
   },
   methods: {
     swithVisibility() {
       this.passwordFieldType =
         this.passwordFieldType === "password" ? "text" : "password";
+    },
+    async login() {
+      await this.$store.dispatch("loginUser", {
+        email: this.user.email,
+        password: this.user.password
+      });
     }
+  },
+  computed: {
+    emailIsValid() {
+      const exp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return this.user.email && exp.test(this.user.email);
+    },
+    ...mapState(["userIsLoggedIn"])
   }
+  
 };
 </script>
 

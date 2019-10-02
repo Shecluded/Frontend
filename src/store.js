@@ -38,15 +38,13 @@ export default new Vuex.Store({
                 email: payload.email,
                 firstName: payload.firstName,
                 lastName: payload.lastName,
-                mobileNumber: payload.mobileNumber,
-                id: user.user.uid
+                mobileNumber: payload.mobileNumber
               })
-              .then(() => {
-                var user = firebase.auth().currentUser;
+              .then((user) => {
+                console.log(user)
                 if (user) {
-                  commit("setUserId", user.uid);
+                  commit("setUserId", user.id);
                   commit("setUser", true);
-                  console.log(user);
                 } else {
                   console.log("error");
                 }
@@ -57,19 +55,17 @@ export default new Vuex.Store({
           commit("setError", err);
         });
     },
-    verifyEmail() {
-     firebase.auth().onAuthStateChanged((user) => {
-       if(user) {
-         let user = firebase.auth().currentUser;
-         user.sendEmailVerification()
-          .then(() => {
-            console.log('Email Sent to ' + user.email)
+    loginUser({ commit }, payload)  {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(payload.email, payload.password)
+          .then(user => {
+            console.log(user)
           })
-          .catch((err) => {
-            console.log(err)
-          })
-       }
-     })
+
+    },
+    logoutUser() {
+      firebase.auth().signOut();
     }
   }
 });

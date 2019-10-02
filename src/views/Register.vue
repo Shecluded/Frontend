@@ -115,7 +115,8 @@
 <script>
 import { required, minLength, between } from "vuelidate/lib/validators";
 import { mapState } from "vuex";
-import firebase from '../firebase'
+import * as firebase from "firebase";
+
 export default {
   data() {
     return {

@@ -1,9 +1,10 @@
 import Vue from "vue";
 import Router from "vue-router";
+import { FirebaseAuth } from 'vuefire'
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: "history",
   routes: [
     {
@@ -100,4 +101,24 @@ export default new Router({
     //   component: () => import("@/views/NotFound.vue")
     // }
   ]
+  
 });
+
+//route guard
+router.beforeEach((to, from, next) => {
+  if(to.matched.some(record => record.meta.auth)) {
+    firebase.auth().onAuthStateChanged((user) => {
+      if(!user) {
+        next({
+          path: '/'
+        })
+      } else {
+        next()
+      }
+    })
+  } else {
+    next()
+  }
+})
+
+export default router;

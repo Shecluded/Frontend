@@ -1,17 +1,29 @@
 <template>
   <div class="welcome flex-column align-items-center">
     <img src="@/assets/images/Woman.svg" alt />
-    <h2 class="text-center pt-4 welcome-text">Welcome to Schecluded Bisola</h2>
+    <h2
+      class="text-center pt-4 welcome-text"
+    >Welcome to Schecluded {{this.$store.state.user.firstName}}</h2>
     <p class="text-center welcome-text-two pt-1">
       Before you can apply for loans we need to know a little bit more
       <br />about you. Kindly take your time to fill the form on the next page.
     </p>
-    <button type="text" class="welcome-button mt-3">Continue</button>
+    <button @click="$router.push('/about-you')" type="text" class="welcome-button mt-3">Continue</button>
   </div>
 </template>
 
 <script>
-export default {};
+import { mapState } from "vuex";
+
+export default {
+  computed: {
+    ...mapState([""])
+  },
+  async mounted() {
+    await this.$store.dispatch("getUser");
+    console.log(this.$store.state.user);
+  }
+};
 </script>
 
 <style>
@@ -20,6 +32,7 @@ export default {};
 }
 .welcome-text {
   font-size: 38px;
+  text-transform: capitalize;
 }
 .welcome-text-two {
   color: #505050;

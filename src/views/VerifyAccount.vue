@@ -10,7 +10,7 @@
         class="verify-input"
         placeholder="Verification Code"
       />
-      <button @click="register()" type="text" class="verify-button mt-3">Register</button>
+      <button @click="AuthVerify()" type="text" class="verify-button mt-3">Register</button>
       <p class="text-center pt-3 mb-2">
         Didn’t get a code?
         <router-link to="/">Send again</router-link>
@@ -28,9 +28,9 @@
 <script>
 import qs from "querystring";
 import db from "../firebase";
-import * as firebase from 'firebase'
-// import { auth, functions } from '../firebase'
+import * as firebase from "firebase";
 import axios from "axios";
+import { functions } from "../firebase";
 
 export default {
   data() {
@@ -43,36 +43,33 @@ export default {
   },
   watch: {
     mobileNumber(x) {
-      this.makeRequest();
+      this.sendAuth();
     }
   },
   beforeCreate() {
-    firebase.auth().onAuthStateChanged((user) => {
+    firebase.auth().onAuthStateChanged(user => {
       this.user = user;
-    })
+    });
   },
   methods: {
-    async makeRequest() {
-      let res = await axios.post("http://localhost:5678/request", {
-        number: this.mobileNumber
-      });
-      this.requestId = res.data.request_id;
-      console.log(res);
-    },
-    async register() {
-      let res = await axios.post("http://localhost:5678/check", {
-        code: this.code,
-        requestId: this.requestId
-      });
-      console.log(res);
-      if (res.statusText === "OK") {
-        this.$router.push("/verify-alert");
-      }
-    },
     sendEmail() {
-      const callable = functions.httpsCallable('sendEmail');
-      return callable()
+      const callable = functions.httpsCallable("sendEmail");
+      return callable();
     },
+
+    sendAuth() {
+      const sendPhoneAuth = functions.httpsCallable("SendPhoneAuth");
+      sendPhoneAuth(this.mobileNumber).then(data => {
+        this.requestId = data.data.request_id;
+      });
+    },
+
+    AuthVerify() {
+      const PhoneAuthVerify = functions.httpsCallable("PhoneAuthVerify");
+      PhoneAuthVerify({ id: this.requestId, code: this.code }).then(data => {
+        this.$router.push("/verify-alert");
+      });
+    }
   },
   mounted() {
     db.collection("users")

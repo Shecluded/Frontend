@@ -4,27 +4,26 @@
       <div class="image-container flex-center">
         <img src="@/assets/images/logo.svg" alt />
       </div>
-
       <div class="login-content flex-column mx-auto mt-5">
         <h1 class="login-text">Login to your Account</h1>
         <p class="login-text-two">To apply for loans and funding</p>
 
-        <input 
+        <input
           autocomplete="off"
           type="text"
           class="input-area mt-3"
           placeholder="Email"
           @blur="$v.user.email.$touch()"
           v-model="user.email"
-          />
-          <div class="flex-column" v-if="$v.user.email.$error">
-            <span class="text-md mt-2" v-if="!$v.user.email.required">Email is required</span>
-          </div>
-          <div class="flex-column" v-if="!emailIsValid && user.email !== ''">
-            <span class="text-md mt-2" v-if="!emailIsValid">Enter valid email address</span>
-          </div>
+        />
+        <div class="flex-column" v-if="$v.user.email.$error">
+          <span class="text-md mt-2" v-if="!$v.user.email.required">Email is required</span>
+        </div>
+        <div class="flex-column" v-if="!emailIsValid && user.email !== ''">
+          <span class="text-md mt-2" v-if="!emailIsValid">Enter valid email address</span>
+        </div>
 
-        <div class="password-cont w-100 flex">
+        <div class="password-cont w-100 flex-column">
           <input
             required
             autocomplete="new-password"
@@ -41,15 +40,15 @@
             <div @click="swithVisibility" v-show="user.password !== ''" class="rounded-grey"></div>
           </div>
         </div>
+        <div class="text-md py-2" v-show="$store.state.error !== ''">{{$store.state.error}}</div>
 
-        <button 
+        <button
           :class="{disabled:$v.$invalid || $store.state.error !== ''}"
           :disabled="$v.$invalid || $store.state.error !== ''"
           @click="login()"
-          type="text" 
+          type="text"
           class="button-area mt-3"
-        >Login
-        </button>
+        >Login</button>
         <p class="text-center pt-3 mb-2">
           Don't have an account?
           <router-link to="/register">Register</router-link>
@@ -67,18 +66,19 @@
 
 <script>
 import { required } from "vuelidate/lib/validators";
-import { mapState } from 'vuex'
-import firebase from '../firebase'
+import { mapState } from "vuex";
+import firebase from "../firebase";
 export default {
   data() {
     return {
       passwordFieldType: "password",
       user: {
         email: "",
-        password: "",
+        password: ""
       },
       disable: false,
-      error: this.$store.state.error
+      error: this.$store.state.error,
+      loading: false
     };
   },
   validations: {
@@ -101,7 +101,14 @@ export default {
         email: this.user.email,
         password: this.user.password
       });
-      this.$router.push("/dashboard")
+    }
+  },
+  watch: {
+    userIsLoggedIn(x, y) {
+      const currentUser = localStorage.getItem("shecludedtoken");
+      if (x == true || currentUser) {
+        this.$router.push("/dashboard");
+      }
     }
   },
   computed: {
@@ -111,7 +118,6 @@ export default {
     },
     ...mapState(["userIsLoggedIn"])
   }
-  
 };
 </script>
 
@@ -179,5 +185,13 @@ export default {
 }
 .login p {
   letter-spacing: 0.2px;
+}
+.text-md {
+  font-size: 12px;
+  font-weight: 100;
+  color: #f740ac;
+}
+.disabled {
+  background: #460129;
 }
 </style>

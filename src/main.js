@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import vuelidate from "vuelidate";
+import VueAuthenticate from "vue-authenticate";
 
 Vue.use(vuelidate);
 Vue.config.productionTip = false;

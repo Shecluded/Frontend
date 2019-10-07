@@ -9,12 +9,24 @@
       type="text"
       class="input-area mt-5"
       placeholder="How much would you like to make each month?"
+      v-model="stepThree.goal"
     />
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      stepThree: {
+        goal: null
+      }
+    };
+  },
+  destroyed() {
+    this.$emit("iniDataThree", this.stepThree);
+  }
+};
 </script>
 
 <style>

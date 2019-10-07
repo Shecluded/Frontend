@@ -9,9 +9,9 @@
         :defaultColor="defaultColor"
       />
     </div>
-    <StepOne v-if="currentStep === 1" />
-    <StepTwo v-if="currentStep === 2" />
-    <StepThree v-if="currentStep === 3" />
+    <StepOne v-if="currentStep === 1" @iniData="stepOneData" />
+    <StepTwo v-if="currentStep === 2" @iniDataTwo="stepTwoData" />
+    <StepThree v-if="currentStep === 3" @iniDataThree="stepThreeData" />
     <StepFour v-if="currentStep === 4" />
 
     <button
@@ -43,7 +43,12 @@ export default {
       steps: 4,
       currentStep: StepProgression.props.currentStep.default,
       currentStepColor: "#F740AC",
-      defaultColor: "#EDEDED"
+      defaultColor: "#EDEDED",
+      allData: {
+        stepOne: null,
+        stepTwo: null,
+        stepThree: null
+      }
     };
   },
   methods: {
@@ -53,7 +58,19 @@ export default {
       } else {
         return;
       }
+    },
+    stepOneData(e) {
+      this.allData.stepOne = e;
+    },
+    stepTwoData(e) {
+      this.allData.stepTwo = e;
+    },
+    stepThreeData(e) {
+      this.allData.stepThree = e;
     }
+  },
+  updated() {
+    console.log(this.allData);
   }
 };
 </script>

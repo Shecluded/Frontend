@@ -34,7 +34,7 @@
           <td>3%</td>
           <td>2 Weeks</td>
           <td>N515000</td>
-          <td>view Details</td>
+          <td class="ul" @click="$router.push('/dashboard/1')">view Details</td>
         </tr>
         <tr></tr>
       </tbody>
@@ -57,5 +57,9 @@ export default {};
   width: 16px;
   background: #fbf10a;
   border-radius: 50%;
+}
+.ul {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

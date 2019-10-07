@@ -1,7 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import db from './firebase.js'
-import firebase from 'firebase'
+import db from "./firebase.js";
+import firebase from "firebase";
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
 
@@ -9,11 +10,15 @@ export default new Vuex.Store({
   state: {
     userId: "",
     userIsLoggedIn: false,
-    error: ""
+    error: "",
+    user: {},
+    aboutData: {
+      aboutYou: ""
+    }
   },
   mutations: {
     setUser(state, payload) {
-      state.userIsLoggedIn = payload || true;
+      state.userIsLoggedIn = payload;
     },
     setUserId(state, payload) {
       state.userId = payload;
@@ -23,6 +28,9 @@ export default new Vuex.Store({
       setTimeout(() => {
         state.error = "";
       }, 5000);
+    },
+    setId(state, payload) {
+      state.user = payload;
     }
   },
   actions: {
@@ -38,40 +46,61 @@ export default new Vuex.Store({
                 email: payload.email,
                 firstName: payload.firstName,
                 lastName: payload.lastName,
-                mobileNumber: payload.mobileNumber
+                mobileNumber: payload.mobileNumber,
+                id: userId
               })
-              .then((user) => {
-                console.log(user)
+              .then(user => {
                 if (user) {
-                  commit("setUserId", user.id);
+                  commit("setUserId", userId);
                   commit("setUser", true);
-                } else {
-                  console.log("error");
                 }
               });
           }
         })
         .catch(err => {
           commit("setError", err);
+          commit("setUser", false);
         });
     },
-    loginUser({ commit }, payload)  {
+
+    loginUser({ commit }, payload) {
       firebase
         .auth()
         .signInWithEmailAndPassword(payload.email, payload.password)
-          .then(user => {
-            const userToken = user.user.ma
-            localStorage.setItem("shecludedtoken", userToken)
-          })
-          .catch(error => {
-            commit("setError", error)
-          })
-
+        .then(user => {
+          commit("setUser", true);
+          const userToken = user.user.ma;
+          localStorage.setItem("shecludedtoken", userToken);
+          return user;
+        })
+        .catch(error => {
+          commit("setUser", false);
+          commit("setError", error.message);
+        });
     },
     logoutUser({ commit }) {
       localStorage.removeItem("shecludedtoken");
-      commit("setUser", false)
-      firebase.auth().signOut();
+      commit("setUser", false);
+    },
+    getUser({ commit, rootState }) {
+      db.collection("users")
+        .where("id", "==", rootState.userId)
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            commit("setId", doc.data());
+          });
+        })
+        .catch(err => {
+          console.log("Error getting documents", err);
+        });
+    },
+    getAboutYou({ commit }, payload) {
+      let aboutYouData = {};
+      db.collection("users")
+        .where("id", "==", rootState.userId)
+        .add();
     }
   }
+  // plugins: [createPersistedState()]
 });

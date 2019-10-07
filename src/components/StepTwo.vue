@@ -4,37 +4,40 @@
     <p class="about-you">How do you currently make money?</p>
     <ul class="nav nav-pills mb-3 mt-5 tab-grid" id="pills-tab" role="tablist">
       <li class="nav-item">
-        <a
+        <button
           class="nav-link flex-center active"
           id="pills-home-tab"
           data-toggle="pill"
+          :disabled="statusTwo== true || statusThree==true"
           href="#pills-home"
           role="tab"
           aria-controls="pills-home"
           aria-selected="true"
-        >Business Owner</a>
+        >Business Owner</button>
       </li>
       <li class="nav-item">
-        <a
+        <button
           class="nav-link flex-center"
           id="pills-profile-tab"
           data-toggle="pill"
+          :disabled="status== true ||  statusThree == true"
           href="#pills-profile"
           role="tab"
           aria-controls="pills-profile"
           aria-selected="false"
-        >Self-employed</a>
+        >Self-employed</button>
       </li>
       <li class="nav-item">
-        <a
+        <button
           class="nav-link flex-center"
           id="pills-contact-tab"
+          :disabled="status== true||statusTwo== true "
           data-toggle="pill"
           href="#pills-contact"
           role="tab"
           aria-controls="pills-contact"
           aria-selected="false"
-        >Employed</a>
+        >Employed</button>
       </li>
     </ul>
     <div class="tab-content w-100" id="pills-tabContent">
@@ -44,7 +47,7 @@
         role="tabpanel"
         aria-labelledby="pills-home-tab"
       >
-        <BusinessOwner />
+        <BusinessOwner @hasValue="val" />
       </div>
       <div
         class="tab-pane fade"
@@ -52,7 +55,7 @@
         role="tabpanel"
         aria-labelledby="pills-profile-tab"
       >
-        <SelfEmployed />
+        <SelfEmployed @hasValueTwo="valTwo" />
       </div>
       <div
         class="tab-pane fade"
@@ -60,7 +63,7 @@
         role="tabpanel"
         aria-labelledby="pills-contact-tab"
       >
-        <Employed />
+        <Employed @hasValueThree="valThree" />
       </div>
     </div>
   </div>
@@ -76,6 +79,31 @@ export default {
     BusinessOwner,
     SelfEmployed,
     Employed
+  },
+  data() {
+    return {
+      status: false,
+      statusTwo: false,
+      statusThree: false,
+      statusData: null
+    };
+  },
+  methods: {
+    val(e) {
+      this.status = !e.isEmpty;
+      this.statusData = e.BusinessOwner;
+    },
+    valTwo(e) {
+      this.statusTwo = !e.isEmpty;
+      this.statusData = e.selfEmployed;
+    },
+    valThree(e) {
+      this.statusThree = !e.isEmpty;
+      this.statusData = e.employed;
+    }
+  },
+  destroyed() {
+    this.$emit("iniDataTwo", this.statusData);
   }
 };
 </script>
@@ -116,6 +144,12 @@ export default {
   display: flex;
   justify-content: space-between;
   width: 100%;
+}
+.disabled {
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+  color: white;
 }
 /* .check {
   color: #fc559b;

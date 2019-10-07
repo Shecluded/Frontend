@@ -7,10 +7,10 @@
       </div>
     </header>
     <div class="dashboard-cont">
-      <div v-show="$route.name!== 'profile'" class="profile pt-5">
+      <div v-if="$route.name!== 'profile'" class="profile pt-5">
         <ProfileCard />
       </div>
-      <div class="main pt-5">
+      <div class="router-main pt-5">
         <router-view></router-view>
       </div>
     </div>
@@ -36,8 +36,8 @@ export default {
   },
   methods: {
     leaveHere() {
-      this.$store.dispatch("logoutUser")
-      this.$router.push("/");
+      this.$store.dispatch("logoutUser");
+      window.location.href = "/";
     }
   }
 };
@@ -82,7 +82,7 @@ export default {
   height: 92vh;
   position: fixed;
 }
-.main {
+.router-main {
   margin-left: 28vw;
   width: 72vw;
   padding-right: 3.9vw;

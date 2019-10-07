@@ -14,50 +14,14 @@
 </template>
 
 <script>
-import firebase from "../firebase"
+import firebase from "../firebase";
 
 export default {
-  data() {
-    return {
-      mobileNumber: null,
-      recaptchaVerifier: null
-    };
-  },
-  watch: {
-    mobileNumber(x) {
-      if (x !== null) {
-        this.getAuthCode();
-      }
-    }
-  },
-  methods: {
-    getAuthCode() {
-      var phoneNumber = this.mobileNumber;
-      var appVerifier = this.recaptchaVerifier;
-      firebase
-        .auth()
-        .signInWithPhoneNumber(phoneNumber, appVerifier)
-        .then(function(confirmationResult) {
-          console.log(confirmationResult.verificationId);
-        })
-        .catch(function(error) {
-          console.log("sms not send");
-        });
-    }
-  },
+  data() {},
+  watch: {},
+  methods: {},
 
-  mounted() {
-    firebase.auth().languageCode = "it";
-    this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-      "recaptcha-container",
-      {
-        size: "invisible",
-        callback: function(response) {
-          console.log(response);
-        }
-      }
-    );
-  }
+  mounted() {}
 };
 </script>
 

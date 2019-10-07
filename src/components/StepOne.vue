@@ -2,32 +2,69 @@
   <div class="step-one flex-column align-items-center mt-4">
     <h1 class="mb-0 mt-2">About You</h1>
     <p class="about-you">We would love to get to know a little more about you</p>
-    <label for="image">
-      <img src="@/assets/images/face.svg" class="mt-5" alt />
-      <input type="file" name="image" id="image" style="display:none;" />
-    </label>
+    <div>
+      <img
+        @click="onPickFile"
+        v-if="stepOne.image == null"
+        src="@/assets/images/face.svg"
+        class="mt-5 mb-4"
+        alt
+      />
+      <img
+        v-else
+        class="mb-4 cover"
+        @click="onPickFile"
+        :src="imageUrl"
+        height="110px"
+        width="110px"
+        alt
+      />
+
+      <input
+        type="file"
+        name="image"
+        id="image"
+        style="display:none;"
+        @change="imageSelect"
+        ref="fileInput"
+        accept="image/*"
+      />
+    </div>
     <p class="check">Click avatar to upload profile, We need to make sure you are not a man</p>
-    <h2 class="text-bold">Bisola Coker</h2>
+    <div class="d-flex">
+      <h2 class="text-bold">{{$store.state.user.firstName}}</h2>
+      <h2 class="text-bold pl-2">{{$store.state.user.lastName}}</h2>
+    </div>
+
     <textarea
       class="form-control pl-3 textarea mt-5"
       id="exampleFormControlTextarea1"
       placeholder="Tell us a little more about you"
       rows="4"
+      v-model="stepOne.bio"
     ></textarea>
     <div class="grid-area mt-3">
-      <input type="number" class="input-area" placeholder="Phone Number" />
+      <input disabled type="number" class="input-area" placeholder="Phone Number" v-model="number" />
       <input
         type="text"
         class="input-area"
         placeholder="DOB"
         onfocus="(this.type='date')"
         onblur="(this.type='text')"
+        v-model="stepOne.date"
       />
     </div>
-    <input type="number" class="input-area mt-3" placeholder="Street" />
+    <input
+      id="google-input"
+      type="text"
+      class="input-area mt-3"
+      placeholder="Street"
+      v-model="stepOne.location"
+      ref="inputgoogle"
+    />
     <div class="grid-area mt-3">
-      <input type="text" class="input-area" placeholder="LGA" />
-      <input type="text" class="input-area" placeholder="State" />
+      <input type="text" class="input-area" placeholder="LGA" v-model="stepOne.lga" />
+      <input type="text" class="input-area" placeholder="State" v-model="stepOne.state" />
     </div>
     <p class="social-text pt-3">Add social media accounts</p>
     <div class="social-container">
@@ -39,7 +76,51 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      imageUrl: null,
+      number: this.$store.state.user.mobileNumber,
+      stepOne: {
+        image: null,
+        bio: null,
+        date: null,
+        location: null,
+        lga: null,
+        state: null
+      }
+    };
+  },
+
+  methods: {
+    onPickFile() {
+      this.$refs.fileInput.click();
+    },
+    imageSelect(event) {
+      const files = event.target.files;
+      let fileName = files[0].name;
+      if (fileName.lastIndexOf(".") <= 0) {
+        return alert("Add a valid file");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.imageUrl = fileReader.result;
+      });
+      fileReader.readAsDataURL(files[0]);
+      this.stepOne.image = files[0];
+    }
+  },
+  mounted() {
+    // let input = document.getElementById("google-input");
+    // let autoComplete = new google.maps.places.Autocomplete(input);
+    // google.maps.event.addListener(autoComplete, "place_changed", function() {
+    //   this.stepOne.location = autoComplete.getPlace().formatted_address;
+    // });
+  },
+  destroyed() {
+    this.$emit("iniData", this.stepOne);
+  }
+};
 </script>
 
 <style>
@@ -138,5 +219,8 @@ label:focus,
   display: grid;
   grid-template-columns: repeat(5, auto);
   justify-content: space-between;
+}
+.cover {
+  object-fit: cover;
 }
 </style>

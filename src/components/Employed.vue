@@ -1,17 +1,36 @@
 <template>
   <div class="employed mt-5">
-    <input type="text" class="input-area" placeholder="Name of company you work at" name id />
-    <input type="text" class="input-area mt-3" placeholder="Address" name id />
+    <input
+      type="text"
+      class="input-area"
+      placeholder="Name of company you work at"
+      v-model="employed.companyName"
+      name
+      id
+    />
+    <input
+      type="text"
+      class="input-area mt-3"
+      placeholder="Address"
+      v-model="employed.address"
+      name
+      id
+    />
     <div class="grid-area mt-3">
-      <input type="text" class="input-area" placeholder="Website" />
-      <input type="text" class="input-area" placeholder="Phone Number" />
+      <input type="text" class="input-area" placeholder="Website" v-model="employed.website" />
+      <input
+        type="text"
+        class="input-area"
+        placeholder="Phone Number"
+        v-model="employed.phoneNumber"
+      />
     </div>
     <div class="mt-3 select-cont">
-      <select class="input-area dropdown" name id>
+      <select class="input-area dropdown" v-model="employed.salary" name id>
         <option selected disabled value>Monthly Salary</option>
-        <option value>Less than 6 months</option>
-        <option value>Less than 1 Years</option>
-        <option value>More than 2 years</option>
+        <option>1 - 50,000</option>
+        <option>50,001 - 500000</option>
+        <option>More than 500000</option>
       </select>
       <img src="@/assets/images/rectangle.svg" class="img-ico" alt />
     </div>
@@ -25,14 +44,15 @@
         class="txt-area w-100 mt-2"
         placeholder="What do you do to the side after office hours?"
         rows="4"
+        v-model="employed.sideHustle"
       ></textarea>
       <div class="grid-area">
         <div class="mt-3 select-cont">
-          <select class="input-area dropdown" name id>
+          <select class="input-area dropdown" name id v-model="employed.hustleIncome">
             <option selected disabled value>How much do you make?</option>
-            <option value>Less than 6 months</option>
-            <option value>Less than 1 Years</option>
-            <option value>More than 2 years</option>
+            <option>1 - 50,000</option>
+            <option>50,001 - 500000</option>
+            <option>More than 500000</option>
           </select>
           <img src="@/assets/images/rectangle.svg" class="img-ico" alt />
         </div>
@@ -46,8 +66,31 @@
 export default {
   data() {
     return {
-      hide: false
+      hide: false,
+      employed: {
+        companyName: "",
+        address: "",
+        website: "",
+        phoneNumber: "",
+        salary: "",
+        sideHustle: "",
+        hustleIncome: ""
+      }
     };
+  },
+  watch: {
+    employed: {
+      handler() {
+        let isEmpty = Object.values(this.employed).every(
+          x => x === null || x === ""
+        );
+        this.$emit("hasValueThree", {
+          isEmpty: isEmpty,
+          employed: this.employed
+        });
+      },
+      deep: true
+    }
   }
 };
 </script>

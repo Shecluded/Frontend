@@ -52,10 +52,10 @@ export default {
     });
   },
   methods: {
-    sendEmail() {
-      const callable = functions.httpsCallable("sendEmail");
-      return callable();
-    },
+    // sendEmail() {
+    //   const callable = functions.httpsCallable("sendEmail");
+    //   return callable();
+    // },
 
     sendAuth() {
       const sendPhoneAuth = functions.httpsCallable("SendPhoneAuth");

@@ -101,6 +101,6 @@ export default new Vuex.Store({
         .where("id", "==", rootState.userId)
         .add();
     }
-  }
-  // plugins: [createPersistedState()]
+  },
+  plugins: [createPersistedState()]
 });

@@ -93,7 +93,7 @@
         </div>
         <button
           :class="{disabled:$v.$invalid || $store.state.error !== ''}"
-          :disabled="$v.$invalid || $store.state.error !== ''"
+          :disabled="$v.$invalid || $store.state.error !== '' || $store.state.loading === true "
           @click="submit()"
           type="text"
           class="button-area mt-3"
@@ -123,6 +123,7 @@ export default {
       error: this.$store.state.error,
       passwordFieldType: "password",
       disable: false,
+      loading: false,
       input: {
         firstName: "",
         lastName: "",
@@ -166,7 +167,8 @@ export default {
     },
     async submit() {
       this.disable = true;
-      await this.$store.dispatch("signUser", {
+      this.loading = true;
+      let res = await this.$store.dispatch("signUser", {
         email: this.input.email,
         password: this.input.password,
         firstName: this.input.firstName,

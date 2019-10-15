@@ -5,7 +5,7 @@
     <div>
       <img
         @click="onPickFile"
-        v-if="stepOne.image == null"
+        v-if="stepOne.profilePic == null"
         src="@/assets/images/face.svg"
         class="mt-5 mb-4"
         alt
@@ -37,61 +37,95 @@
     </div>
 
     <textarea
+      required
       class="form-control pl-3 textarea mt-5"
       id="exampleFormControlTextarea1"
       placeholder="Tell us a little more about you"
       rows="4"
-      v-model="stepOne.bio"
+      v-model="userBio"
     ></textarea>
     <div class="grid-area mt-3">
-      <input disabled type="number" class="input-area" placeholder="Phone Number" v-model="number" />
+      <input disabled type="text" class="input-area" placeholder="Phone Number" v-model="number" />
       <input
+        required
         type="text"
         class="input-area"
         placeholder="DOB"
         onfocus="(this.type='date')"
         onblur="(this.type='text')"
-        v-model="stepOne.date"
+        v-model="dateOfBirth"
       />
     </div>
     <input
+      required
       id="google-input"
       type="text"
       class="input-area mt-3"
       placeholder="Street"
-      v-model="stepOne.location"
+      v-model="currentLocation"
       ref="inputgoogle"
     />
     <div class="grid-area mt-3">
-      <input type="text" class="input-area" placeholder="LGA" v-model="stepOne.lga" />
-      <input type="text" class="input-area" placeholder="State" v-model="stepOne.state" />
+      <input type="text" class="input-area" required placeholder="LGA" v-model="localGovernment" />
+      <input type="text" class="input-area" required placeholder="State" v-model="userState" />
     </div>
-    <p class="social-text pt-3">Add social media accounts</p>
+    <!-- <p class="social-text pt-3">Add social media accounts</p>
     <div class="social-container">
       <div v-for="i in 5" :key="i">
         <div class="grey"></div>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 
 <script>
+import { storage } from "../firebase";
+import { mapFields } from "vuex-map-fields";
 export default {
   data() {
     return {
       imageUrl: null,
       number: this.$store.state.user.mobileNumber,
       stepOne: {
-        image: null,
-        bio: null,
-        date: null,
-        location: null,
-        lga: null,
-        state: null
+        profilePic: null
       }
     };
   },
-
+  computed: {
+    ...mapFields([
+      "Data.userBio",
+      "Data.dateOfBirth",
+      "Data.currentLocation",
+      "Data.localGovernment",
+      "Data.userState"
+    ])
+  },
+  watch: {
+    "stepOne.profilePic": {
+      handler(x) {
+        this.$store.commit("setImage", this.stepOne.profilePic);
+      },
+      deep: true
+    },
+    "$store.state.Data": {
+      handler(x) {
+        let checkFirst = {
+          pic: this.$store.state.Data.profilePic,
+          userBio: this.$store.state.Data.userBio,
+          dateOfBirth: this.$store.state.Data.dateOfBirth,
+          currentLocation: this.$store.state.Data.currentLocation,
+          localGovernment: this.$store.state.Data.localGovernment,
+          userState: this.$store.state.Data.userState
+        };
+        var exists = Object.keys(checkFirst).some(k => {
+          return checkFirst[k] === "" || checkFirst[k] === null;
+        });
+        this.$emit("checkAll", exists);
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   methods: {
     onPickFile() {
       this.$refs.fileInput.click();
@@ -105,9 +139,17 @@ export default {
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
         this.imageUrl = fileReader.result;
+        this.uploadImage();
       });
       fileReader.readAsDataURL(files[0]);
-      this.stepOne.image = files[0];
+      this.stepOne.profilePic = files[0].name;
+    },
+    uploadImage() {
+      let storageRef = storage.ref();
+      let images = storageRef
+        .child(this.$store.state.userId + "/" + this.stepOne.profilePic)
+        .putString(this.imageUrl, "data_url")
+        .then(data => {});
     }
   },
   mounted() {

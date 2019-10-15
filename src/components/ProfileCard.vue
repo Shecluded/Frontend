@@ -1,19 +1,31 @@
 <template>
   <div class="profile-card">
     <div class="profile-card-cont flex-column align-items-center">
-      <img src="@/assets/images/kidavatar.svg" class="avatar-image" alt />
-      <h1 class="pt-3 text-center">Bisola Coker</h1>
-      <p
-        class="text-center px-4"
-      >I am a business woman building a fashion brand and empowering young fashion entreprenuers</p>
-      <img src="@/assets/images/social.svg" alt />
+      <img :src="image" class="avatar-image" alt />
+      <h1 class="pt-3 text-center">{{$store.state.user.firstName}} {{$store.state.user.lastName}}</h1>
+      <p class="text-center px-4">{{$store.state.user.userBio}}</p>
+      <!-- <img src="@/assets/images/social.svg" alt /> -->
     </div>
     <button @click="$router.push('/dashboard/profile')" class="avatar-btn mt-4">Edit Profile</button>
   </div>
 </template>
 
 <script>
-export default {};
+import { storage } from "../firebase";
+export default {
+  data() {
+    return {
+      image: null
+    };
+  },
+  mounted() {
+    let storageRef = storage.ref();
+    let userImage = storageRef
+      .child(this.$store.state.userId + "/" + this.$store.state.user.profilePic)
+      .getDownloadURL()
+      .then(url => (this.image = url));
+  }
+};
 </script>
 
 <style>
@@ -38,6 +50,7 @@ export default {};
 .profile-card-cont h1 {
   color: #565656;
   font-size: 30px;
+  text-transform: capitalize;
 }
 .profile-card-cont p {
   color: #535353;

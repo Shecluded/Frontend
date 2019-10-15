@@ -13,15 +13,9 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
 export default {
-  computed: {
-    ...mapState([""])
-  },
   async mounted() {
     await this.$store.dispatch("getUser");
-    console.log(this.$store.state.user);
   }
 };
 </script>

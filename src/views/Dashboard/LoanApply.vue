@@ -5,51 +5,86 @@
       <h2 class="mb-0 pl-3 dim">Apply for a Loan</h2>
     </div>
     <div class="sp pt-4">Repayment Term</div>
-    <input type="number" placeholder="Amount" class="input-area mt-3" />
-    <div class="flex align-items-center mt-3 input">
+    <form @submit.prevent="calculateLoan">
+      <input
+        type="number"
+        placeholder="Amount"
+        required
+        class="input-area mt-3"
+        v-model="loanApply.loanAmount"
+      />
+      <!-- <div class="flex align-items-center mt-3 input">
       <input type="number" placeholder="Attach Bank Statement" class="input-area" />
       <label class="label" for="image">
         <img src="@/assets/images/plus.svg" class="plus-image" alt />
         <input type="file" name="image" id="image" style="display:none;" />
       </label>
-    </div>
-    <textarea name id class="text-area mt-3 pt-3" rows="5" placeholder="Why do you need the Loan ?"></textarea>
-    <div class="sp pt-4">Repayment Term</div>
-    <div class="grid-area">
-      <div class="mt-3 select-cont">
-        <select class="input-area dropdown" name id>
-          <option selected disabled value>Month</option>
-          <option value>Less than 6 months</option>
-          <option value>Less than 1 Years</option>
-          <option value>More than 2 years</option>
-        </select>
-        <img src="@/assets/images/rectangle.svg" class="img-ico" alt />
+      </div>-->
+      <textarea
+        required
+        name
+        id
+        class="text-area mt-3 pt-3"
+        rows="5"
+        v-model="loanApply.loanDesc"
+        placeholder="Why do you need the Loan ?"
+      ></textarea>
+      <div class="sp pt-4">Repayment Term</div>
+      <div class="grid-area">
+        <div class="mt-3 select-cont">
+          <select class="input-area dropdown" name id v-model="loanApply.loanTerm">
+            <option selected disabled value>Loan Term</option>
+            <option>monthly</option>
+            <option>weekly</option>
+          </select>
+          <img src="@/assets/images/rectangle.svg" class="img-ico" alt />
+        </div>
+        <div class="mt-3 select-cont">
+          <select class="input-area dropdown" v-model="loanApply.loanDuration" name id>
+            <option selected disabled value>Loan Duration</option>
+            <option v-for="i in 12">{{i}}</option>
+          </select>
+          <img src="@/assets/images/rectangle.svg" class="img-ico" alt />
+        </div>
       </div>
-      <div class="mt-3 select-cont">
-        <select class="input-area dropdown" name id>
-          <option selected disabled value>0</option>
-          <option value>1</option>
-          <option value>2</option>
-          <option value>3</option>
-        </select>
-        <img src="@/assets/images/rectangle.svg" class="img-ico" alt />
-      </div>
-    </div>
-    <button @click="show = !show" class="btn-area mt-3">Calculate Loan</button>
-    <RepaymentSchedule v-if="show" />
+      <button type="submit" @click.native="calculateLoan" class="btn-area mt-3">Calculate Loan</button>
+    </form>
+    <RepaymentSchedule :loanTable="loanTable" :loanApply="loanApply" v-if="show" />
   </div>
 </template>
 
 <script>
+import { functions } from "../../firebase";
 import RepaymentSchedule from "../../components/RepaymentSchedule";
 export default {
   data() {
     return {
-      show: false
+      show: false,
+      loanApply: {
+        loanAmount: null,
+        loanDesc: "",
+        loanTerm: "",
+        loanDuration: ""
+      },
+      loanTable: null
     };
   },
   components: {
     RepaymentSchedule
+  },
+  methods: {
+    calculateLoan() {
+      const Calculate_Loan = functions.httpsCallable("Calculate_Loan");
+      Calculate_Loan({
+        loanAmount: Number(this.loanApply.loanAmount),
+        loanDuration: Number(this.loanApply.loanDuration),
+        loanTerm: this.loanApply.loanTerm
+      }).then(data => {
+        this.loanTable = data.data;
+        console.log(this.loanTable);
+      });
+      this.show = true;
+    }
   }
 };
 </script>

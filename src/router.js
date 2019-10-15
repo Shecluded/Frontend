@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
-import store from "./store";
+import firebase from "firebase";
+
 Vue.use(Router);
 
 const router = new Router({
@@ -163,5 +164,22 @@ router.beforeEach((to, from, next) => {
     else next("/");
   }
 });
+// router.beforeEach((to, from, next) => {
+//   if (to.matched.some(record => record.meta.access == "auth")) {
+//     if (!firebase.auth().currentUser) {
+//       next("/");
+//     } else {
+//       next();
+//     }
+//   } else if (to.matched.some(record => record.meta.access == "guest")) {
+//     if (firebase.auth().currentUser) {
+//       next("/dashboard");
+//     } else {
+//       next();
+//     }
+//   } else {
+//     next();
+//   }
+// });
 
 export default router;

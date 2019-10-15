@@ -9,22 +9,31 @@
       type="text"
       class="input-area mt-5"
       placeholder="How much would you like to make each month?"
-      v-model="stepThree.goal"
+      v-model="goal"
     />
   </div>
 </template>
 
 <script>
+import { mapFields } from "vuex-map-fields";
 export default {
-  data() {
-    return {
-      stepThree: {
-        goal: null
-      }
-    };
-  },
-  destroyed() {
-    this.$emit("iniDataThree", this.stepThree);
+  // watch: {
+  //   "$store.state.Data": {
+  //     handler(x) {
+  //       let checkFirst = {
+  //         goal: this.$store.state.Data.goal
+  //       };
+  //       var exists = Object.keys(checkFirst).some(k => {
+  //         return checkFirst[k] === "" || checkFirst[k] === null;
+  //       });
+  //       this.$emit("next", exists);
+  //     },
+  //     deep: true,
+  //     immediate: true
+  //   }
+  // },
+  computed: {
+    ...mapFields(["Data.goal"])
   }
 };
 </script>

@@ -29,7 +29,6 @@
 import qs from "querystring";
 import db from "../firebase";
 import * as firebase from "firebase";
-import axios from "axios";
 import { functions } from "../firebase";
 
 export default {
@@ -38,7 +37,9 @@ export default {
       mobileNumber: null,
       code: null,
       requestId: null,
-      user: null
+      user: null,
+      email: null,
+      firstName: null
     };
   },
   watch: {
@@ -52,10 +53,9 @@ export default {
     });
   },
   methods: {
-    // sendEmail() {
-    //   const callable = functions.httpsCallable("sendEmail");
-    //   return callable();
-    // },
+    sendEmail() {
+      const SendWelcomeMail = functions.httpsCallable("SendWelcomeMail");
+    },
 
     sendAuth() {
       const sendPhoneAuth = functions.httpsCallable("SendPhoneAuth");
@@ -67,23 +67,38 @@ export default {
     AuthVerify() {
       const PhoneAuthVerify = functions.httpsCallable("PhoneAuthVerify");
       PhoneAuthVerify({ id: this.requestId, code: this.code }).then(data => {
+        const SendWelcomeMail = functions.httpsCallable("SendWelcomeMail");
+        SendWelcomeMail({
+          context: {
+            auth: {
+              token: {
+                email: this.email,
+                name: this.firstName
+              }
+            }
+          }
+        });
         this.$router.push("/verify-alert");
       });
     }
   },
   mounted() {
     db.collection("users")
-      .where("id", "==", this.$store.state.userId)
+      .where("userID", "==", this.$store.state.userId)
       .get()
       .then(snapshot => {
         snapshot.forEach(doc => {
           this.mobileNumber = doc.data().mobileNumber;
-          console.log(this.mobileNumber);
+          this.email = doc.data().email;
+          this.firstName = doc.data().firstName;
         });
       })
       .catch(err => {
         console.log("Error getting documents", err);
       });
+
+    const SendWelcomeMail = functions.httpsCallable("SendWelcomeMail");
+    SendWelcomeMail().then(data => {});
   }
 };
 </script>

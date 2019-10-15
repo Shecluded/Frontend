@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div v-if="this.$store.state.user !== ''" class="dashboard">
     <header class="header flex-center shadow-sm">
       <h1 class="text-center">SHECLUDED</h1>
       <div v-if="$route.name!== 'profile'" class="btn-cont">
@@ -14,6 +14,9 @@
         <router-view></router-view>
       </div>
     </div>
+  </div>
+  <div v-else class="w-100 load d-flex justify-content-center align-items-center">
+    <img src="@/assets/images/spinner.svg" alt />
   </div>
 </template>
 
@@ -39,6 +42,9 @@ export default {
       this.$store.dispatch("logoutUser");
       window.location.href = "/";
     }
+  },
+  async mounted() {
+    await this.$store.dispatch("getUser");
   }
 };
 </script>
@@ -47,6 +53,9 @@ export default {
 .dashboard {
   width: 100vw;
 }
+.load {
+  height: 100vh;
+}
 .header {
   height: 8vh;
   background: white;
@@ -54,7 +63,7 @@ export default {
   font-size: 12px;
   position: fixed;
   width: 100%;
-  z-index: 5;
+  z-index: 100;
 }
 .header h1 {
   font-size: 26px;

@@ -83,6 +83,9 @@ import OverviewTable from "../../components/OverviewTable";
 export default {
   components: {
     OverviewTable
+  },
+  async mounted() {
+    await this.$store.dispatch("getUser");
   }
 };
 </script>

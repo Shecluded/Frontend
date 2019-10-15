@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-column align-items-center">
+  <div class="flex-column align-items-center about">
     <div class="progress-area">
       <step-progression
         class="icon"
@@ -9,12 +9,13 @@
         :defaultColor="defaultColor"
       />
     </div>
-    <StepOne v-if="currentStep === 1" @iniData="stepOneData" />
-    <StepTwo v-if="currentStep === 2" @iniDataTwo="stepTwoData" />
-    <StepThree v-if="currentStep === 3" @iniDataThree="stepThreeData" />
+    <StepOne v-if="currentStep === 1" @checkAll="checkStateMode" />
+    <StepTwo v-if="currentStep === 2" @revertBack="changeBack" />
+    <StepThree v-if="currentStep === 3" @revertBack="changeBack" @next="checkStateMode" />
     <StepFour v-if="currentStep === 4" />
 
     <button
+      :disabled="!currentState"
       v-if="currentStep < steps"
       @click="increaseStep(currentStep, steps);"
       class="about-btn mt-5 mb-5"
@@ -45,10 +46,11 @@ export default {
       currentStepColor: "#F740AC",
       defaultColor: "#EDEDED",
       allData: {
-        stepOne: null,
-        stepTwo: null,
-        stepThree: null
-      }
+        stepOne: "",
+        stepTwo: "",
+        stepThree: ""
+      },
+      currentState: false
     };
   },
   methods: {
@@ -59,18 +61,24 @@ export default {
         return;
       }
     },
-    stepOneData(e) {
-      this.allData.stepOne = e;
+    // stepOneData(e) {
+    //   this.allData.stepOne = [e];
+    // },
+    // stepTwoData(e) {
+    //   this.allData.stepTwo = [e];
+    // },
+    // stepThreeData(e) {
+    //   this.allData.stepThree = [e];
+    // },
+    checkStateMode(e) {
+      this.currentState = !e;
     },
-    stepTwoData(e) {
-      this.allData.stepTwo = e;
-    },
-    stepThreeData(e) {
-      this.allData.stepThree = e;
+    changeBack(e) {
+      this.currentState = e;
     }
   },
-  updated() {
-    console.log(this.allData);
+  async mounted() {
+    await this.$store.dispatch("getUser");
   }
 };
 </script>
@@ -105,5 +113,24 @@ export default {
   height: 95% !important;
   /* margin-left: 1px !important;
   padding-right: 3px !important; */
+}
+.about button {
+  position: relative;
+}
+
+.about button:hover:after {
+  position: absolute;
+  width: 50%;
+  top: 150%;
+  right: 50%;
+  transform: translate(50%, -50%);
+  background-color: rgba(0, 0, 0, 0.56);
+  color: white;
+  text-align: center;
+}
+.about button:disabled,
+input:disabled {
+  background: rgba(0, 0, 0, 0.195);
+  color: white !important;
 }
 </style>

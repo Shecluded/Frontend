@@ -2,68 +2,46 @@
   <div class="step-two flex-column align-items-center mt-4">
     <h1 class="mb-0 mt-2">Source of Income</h1>
     <p class="about-you">How do you currently make money?</p>
-    <ul class="nav nav-pills mb-3 mt-5 tab-grid" id="pills-tab" role="tablist">
+    <ul class="nav mb-3 mt-5 tab-grid">
       <li class="nav-item">
         <button
-          class="nav-link flex-center active"
-          id="pills-home-tab"
-          data-toggle="pill"
-          :disabled="statusTwo== true || statusThree==true"
-          href="#pills-home"
-          role="tab"
-          aria-controls="pills-home"
-          aria-selected="true"
+          :class="{sactive:activeTab === 1 }"
+          class="nav-link flex-center"
+          @click="change(1)"
+          :disabled="$store.state.statusTwo == true || $store.state.statusThree == true"
         >Business Owner</button>
       </li>
       <li class="nav-item">
         <button
+          :class="{sactive:activeTab === 2 }"
           class="nav-link flex-center"
-          id="pills-profile-tab"
           data-toggle="pill"
-          :disabled="status== true ||  statusThree == true"
-          href="#pills-profile"
-          role="tab"
-          aria-controls="pills-profile"
-          aria-selected="false"
+          :disabled="$store.state.status == true|| $store.state.statusThree == true"
+          @click="change(2)"
         >Self-employed</button>
       </li>
       <li class="nav-item">
         <button
+          :class="{sactive:activeTab === 3 }"
           class="nav-link flex-center"
-          id="pills-contact-tab"
-          :disabled="status== true||statusTwo== true "
-          data-toggle="pill"
-          href="#pills-contact"
-          role="tab"
-          aria-controls="pills-contact"
-          aria-selected="false"
+          :disabled="$store.state.statusTwo == true ||$store.state.status == true  "
+          @click="change(3)"
         >Employed</button>
       </li>
     </ul>
     <div class="tab-content w-100" id="pills-tabContent">
-      <div
-        class="tab-pane fade show active"
-        id="pills-home"
-        role="tabpanel"
-        aria-labelledby="pills-home-tab"
-      >
-        <BusinessOwner @hasValue="val" />
+      <div>
+        <BusinessOwner @fieldsAreBlank="businessOne" @AllFields="next" v-if="activeTab === 1" />
       </div>
-      <div
-        class="tab-pane fade"
-        id="pills-profile"
-        role="tabpanel"
-        aria-labelledby="pills-profile-tab"
-      >
-        <SelfEmployed @hasValueTwo="valTwo" />
+      <div>
+        <SelfEmployed @fieldsAreBlankTwo="businessTwo" @AllFieldsTwo="next" v-if="activeTab === 2" />
       </div>
-      <div
-        class="tab-pane fade"
-        id="pills-contact"
-        role="tabpanel"
-        aria-labelledby="pills-contact-tab"
-      >
-        <Employed @hasValueThree="valThree" />
+      <div>
+        <Employed
+          @fieldsAreBlankThree="businessThree"
+          @AllFieldsThree="next"
+          v-if="activeTab === 3"
+        />
       </div>
     </div>
   </div>
@@ -75,35 +53,47 @@ import SelfEmployed from "./SelfEmployed";
 import Employed from "./Employed";
 
 export default {
+  data() {
+    return {
+      activeTab: null,
+      newTab: null
+    };
+  },
   components: {
     BusinessOwner,
     SelfEmployed,
     Employed
   },
-  data() {
-    return {
-      status: false,
-      statusTwo: false,
-      statusThree: false,
-      statusData: null
-    };
-  },
-  methods: {
-    val(e) {
-      this.status = !e.isEmpty;
-      this.statusData = e.BusinessOwner;
-    },
-    valTwo(e) {
-      this.statusTwo = !e.isEmpty;
-      this.statusData = e.selfEmployed;
-    },
-    valThree(e) {
-      this.statusThree = !e.isEmpty;
-      this.statusData = e.employed;
+  watch: {
+    "$store.state.activeTab": {
+      handler(x) {
+        this.activeTab = x;
+      },
+      deep: true,
+      immediate: true
     }
   },
-  destroyed() {
-    this.$emit("iniDataTwo", this.statusData);
+  methods: {
+    businessOne(e) {
+      this.$store.commit("setStatus", !e);
+    },
+    businessTwo(e) {
+      this.$store.commit("setStatusTwo", !e);
+    },
+    businessThree(e) {
+      this.$store.commit("setStatusThree", !e);
+    },
+    change(x) {
+      this.$store.commit("changeState", x);
+    },
+    next(e) {
+      this.$emit("revertBack", !e);
+    }
+  },
+
+  mounted() {
+    this.$emit("revertBack", false);
+    this.activeTab = this.$store.state.activeTab;
   }
 };
 </script>
@@ -133,6 +123,16 @@ export default {
 }
 .nav-link:hover {
   color: #7d7d7d;
+}
+.sactive {
+  background: #fc559b;
+  border: 0.75px solid rgba(20, 20, 20, 0.25);
+  box-sizing: border-box;
+  border-radius: 4px;
+  color: white;
+}
+.sactive:hover {
+  color: white;
 }
 .nav-pills .nav-link.active {
   background: #fc559b;
